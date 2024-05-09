@@ -12,7 +12,7 @@ export class RegisterComponent {
 
   constructor(
     private router: Router,
-    private authService: AuthenticationService,
+    private authService: AuthenticationService
 
   ) {
 
@@ -23,10 +23,21 @@ export class RegisterComponent {
 
 
   login() {
-    this.router.navigate(['login'])
+    this.router.navigate(['login']);
 
   }
   register() {
+    this.errorMsg = [];
+    this.authService.register({
+      body: this.registerRequest
+    }).subscribe({
+      next: () =>{
+        this.router.navigate(['activate-account']);
+      },
+      error: (err) => {
+        this.errorMsg = err.error.validationErrors;
+      }
+    });
 
   }
 }
