@@ -10,29 +10,29 @@ import { PageResponseBookResponse } from '../../../../services/models';
   templateUrl: './book-list.component.html',
   styleUrl: './book-list.component.scss'
 })
-export class BookListComponent implements OnInit{
+export class BookListComponent implements OnInit {
   bookResponse: PageResponseBookResponse = {};
-   page: number = 0;
-   size: number = 5;
+  page = 0;
+  size = 5;
 
   constructor(
     private bookService: BookService,
     private router: Router
-  ) {}
+  ) { }
 
 
   ngOnInit(): void {
-   this.findAllBooks();
+    this.findAllBooks();
   }
-  private findAllBooks() {
-this.bookService.findAllBooks( {
-  page: this.page,
-  size: this.size
-}).subscribe({
-  next: (books) => {
-this.bookResponse = books;
-  }
-})
+  private findAllBooks(): void {
+    this.bookService.findAllBooks({
+      page: this.page,
+      size: this.size
+    }).subscribe({
+      next: (books) => {
+        this.bookResponse = books;
+      }
+    })
   }
 
 }
