@@ -1,8 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {AuthenticationService} from '../../services/services/authentication.service';
-import {TokenService} from '../../services/token/token.service';
-import { AuthenticationRequest } from '../../services/models';
 import { KeycloakService } from '../../services/keycloak/keycloak.service';
 
 @Component({

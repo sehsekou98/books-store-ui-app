@@ -6,9 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-manage-book',
   templateUrl: './manage-book.component.html',
-  styleUrl: './manage-book.component.scss'
+  styleUrls: ['./manage-book.component.scss'] // Changed styleUrl to styleUrls
 })
-export class ManageBookComponent implements OnInit{
+export class ManageBookComponent implements OnInit {
 
   errorMsg: Array<string> = [];
   selectedBookCover: any;
@@ -24,32 +24,28 @@ export class ManageBookComponent implements OnInit{
     private bookService: BookService,
     private router: Router,
     private activatedRoute: ActivatedRoute
-  ) {
+  ) {}
 
-  }
   ngOnInit(): void {
-  const bookId = this.activatedRoute.snapshot.params['bookId'];
-  if (bookId) {
-    this.bookService.findBookById({
-      'book_id': bookId
-    }).subscribe({
-      next: (book) => {
-        this.bookRequest = {
-          id: book.id,
-          title: book.title as string,
-          authorName: book.authorName as string,
-          isbn: book.isbn as string,
-          synopsis: book.synopsis as string,
-          shareable: book.shareable
-
+    const bookId = this.activatedRoute.snapshot.params['bookId'];
+    if (bookId) {
+      this.bookService.findBookById({ 'book_id': bookId }).subscribe({
+        next: (book) => {
+          this.bookRequest = {
+            id: book.id,
+            title: book.title as string,
+            authorName: book.authorName as string,
+            isbn: book.isbn as string,
+            synopsis: book.synopsis as string,
+            shareable: book.shareable
+          };
+          if (book.cover) {
+            this.selectedPicture = 'data:image/jpg;base64,' + book.cover;
+          }
         }
-        if(book.cover) {
-          this.selectedPicture = 'data:image/jpg;base64,' + book.cover;
-        }
-      }
-    });
+      });
+    }
   }
-}
 
   onFileSelected(event: any) {
     this.selectedBookCover = event.target.files[0];
@@ -58,32 +54,30 @@ export class ManageBookComponent implements OnInit{
       const reader = new FileReader();
       reader.onload = () => {
         this.selectedBookCover = reader.result as string;
-      }
+      };
       reader.readAsDataURL(this.selectedBookCover);
     }
-
   }
 
   saveBook() {
-    this.bookService.saveBook({
-      body: this.bookRequest
-    }).subscribe({
-      next:(bookId) => {
+    this.bookService.saveBook({ body: this.bookRequest }).subscribe({
+      next: (bookId) => {
         this.bookService.uploadCoverPicture({
           'book_id': bookId,
-          body: {
-            file: this.selectedBookCover
-          }
+          body: { file: this.selectedBookCover }
         }).subscribe({
           next: () => {
             this.router.navigate(['/book/my-books']);
           }
-        })
+        });
       },
       error: (err) => {
-        this.errorMsg = err.error.validationErrors;
+        if (err.error && err.error.validationErrors) {
+          this.errorMsg = err.error.validationErrors;
+        } else {
+          this.errorMsg = ['An error occurred. Please try again.'];
+        }
       }
     });
-    }
-
+  }
 }

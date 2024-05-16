@@ -9,6 +9,8 @@ export class KeycloakService {
 
   private _keycloak: Keycloak | undefined;
   private _profile: UserProfile | undefined;
+
+
   get Keycloak() {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
@@ -44,7 +46,7 @@ export class KeycloakService {
     return this.Keycloak?.login();
   }
   logout() {
-    return this.Keycloak?.logout({redirectUri: 'http://localhost:4200'});
+    return this.Keycloak?.logout();
 
   }
 
